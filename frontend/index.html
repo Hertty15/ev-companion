@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="EV Companion - Your intelligent electric vehicle assistant">
+
+    <title>EV Companion</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/static/manifest.json">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="/static/icons/icon.svg">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Auth Screen -->
+        <div id="auth-screen" class="screen active">
+            <div class="auth-container">
+                <div class="logo-section">
+                    <div class="logo-icon">⚡</div>
+                    <h1>EV Companion</h1>
+                    <p>Your intelligent EV assistant</p>
+                </div>
+
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login">Login</button>
+                    <button class="auth-tab" data-tab="signup">Sign Up</button>
+                </div>
+
+                <form id="login-form" class="auth-form active">
+                    <div class="input-group">
+                        <input type="text" id="login-username" placeholder="Username" required autocomplete="username">
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="login-password" placeholder="Password" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <span class="btn-text">Login</span>
+                        <span class="btn-loader hidden">⟳</span>
+                    </button>
+                </form>
+
+                <form id="signup-form" class="auth-form">
+                    <div class="input-group">
+                        <input type="text" id="signup-username" placeholder="Username" required autocomplete="username" minlength="3">
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="signup-password" placeholder="Password" required autocomplete="new-password" minlength="6">
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <span class="btn-text">Create Account</span>
+                        <span class="btn-loader hidden">⟳</span>
+                    </button>
+                </form>
+
+                <div id="auth-error" class="error-message hidden"></div>
+            </div>
+        </div>
+
+        <!-- Main App Screen -->
+        <div id="main-screen" class="screen">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-left">
+                    <div class="logo-small">⚡</div>
+                    <span class="app-title">EV Companion</span>
+                </div>
+                <div class="header-right">
+                    <div class="connection-status" id="connection-status">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Connecting...</span>
+                    </div>
+                    <button id="logout-btn" class="icon-btn" title="Logout">→</button>
+                </div>
+            </header>
+
+            <!-- EV Status Bar -->
+            <div class="ev-status-bar" id="ev-status-bar">
+                <div class="ev-status-item">
+                    <div class="ev-icon">🔋</div>
+                    <div class="ev-info">
+                        <span class="ev-value" id="ev-battery">--%</span>
+                        <span class="ev-label">Battery</span>
+                    </div>
+                </div>
+                <div class="ev-status-item">
+                    <div class="ev-icon">🛣️</div>
+                    <div class="ev-info">
+                        <span class="ev-value" id="ev-range">-- km</span>
+                        <span class="ev-label">Range</span>
+                    </div>
+                </div>
+                <div class="ev-status-item">
+                    <div class="ev-icon" id="ev-charge-icon">⚡</div>
+                    <div class="ev-info">
+                        <span class="ev-value" id="ev-charging">--</span>
+                        <span class="ev-label">Status</span>
+                    </div>
+                </div>
+                <div class="ev-status-item">
+                    <div class="ev-icon">📍</div>
+                    <div class="ev-info">
+                        <span class="ev-value" id="ev-odometer">-- km</span>
+                        <span class="ev-label">Odometer</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-container" id="chat-container">
+                <div class="welcome-message" id="welcome-message">
+                    <div class="welcome-icon">🚗</div>
+                    <h2>Welcome to EV Companion</h2>
+                    <p>Ask me anything about your EV — battery tips, charging stations, range calculations, maintenance advice, and more.</p>
+                    <div class="quick-actions">
+                        <button class="quick-btn" data-prompt="What's the best way to maximize my battery life?">🔋 Battery Tips</button>
+                        <button class="quick-btn" data-prompt="Find charging stations near me">⚡ Find Chargers</button>
+                        <button class="quick-btn" data-prompt="How do I plan a long road trip with my EV?">🗺️ Trip Planning</button>
+                        <button class="quick-btn" data-prompt="What maintenance does my EV need?">🔧 Maintenance</button>
+                    </div>
+                </div>
+                <div class="messages-list" id="messages-list"></div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="input-container">
+                    <textarea 
+                        id="message-input" 
+                        placeholder="Ask about your EV..." 
+                        rows="1"
+                        maxlength="4000"
+                    ></textarea>
+                    <button id="send-btn" class="send-btn" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+                <div class="input-hint">Press Enter to send, Shift+Enter for new line</div>
+            </div>
+        </div>
+
+        <!-- Install Prompt -->
+        <div id="install-prompt" class="install-prompt hidden">
+            <div class="install-content">
+                <span>📲 Install EV Companion for offline access</span>
+                <button id="install-btn" class="btn-small">Install</button>
+                <button id="dismiss-install" class="icon-btn">×</button>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container" class="toast-container"></div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
